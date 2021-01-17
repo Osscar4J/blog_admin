@@ -1,5 +1,5 @@
 import BaseApi from './baseApi'
 
 export default Object.create(BaseApi, {
-	baseUrl: {value: '/banner'},
+	baseUrl: {value: '/nmap'},
 })

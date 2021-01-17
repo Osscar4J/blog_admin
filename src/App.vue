@@ -1,8 +1,6 @@
 <template>
   <div id="app">
-    <transition name="fadeInBottom">
-      <router-view/>
-    </transition>
+    <router-view/>
   </div>
 </template>
 
@@ -13,7 +11,21 @@
 </script>
 
 <style lang="scss">
+@import url(assets/css/style);
+
 @keyframes bounceIn{0%,20%,40%,60%,80%,to{-webkit-animation-timing-function:cubic-bezier(.215,.61,.355,1);animation-timing-function:cubic-bezier(.215,.61,.355,1)}0%{opacity:0;-webkit-transform:scale3d(.3,.3,.3);transform:scale3d(.3,.3,.3)}20%{-webkit-transform:scale3d(1.1,1.1,1.1);transform:scale3d(1.1,1.1,1.1)}40%{-webkit-transform:scale3d(.9,.9,.9);transform:scale3d(.9,.9,.9)}60%{opacity:1;-webkit-transform:scale3d(1.03,1.03,1.03);transform:scale3d(1.03,1.03,1.03)}80%{-webkit-transform:scale3d(.97,.97,.97);transform:scale3d(.97,.97,.97)}to{opacity:1;-webkit-transform:scaleX(1);transform:scaleX(1)}}
+@keyframes square-spin {
+  25%{-webkit-transform: perspective(100px) rotateX(180deg) rotateY(0);transform: perspective(100px) rotateX(180deg) rotateY(0);}
+  50%{-webkit-transform: perspective(100px) rotateX(180deg) rotateY(180deg);transform: perspective(100px) rotateX(180deg) rotateY(180deg);}
+  75%{-webkit-transform: perspective(100px) rotateX(0) rotateY(180deg);transform: perspective(100px) rotateX(0) rotateY(180deg);}
+  100%{-webkit-transform: perspective(100px) rotateX(0) rotateY(0);transform: perspective(100px) rotateX(0) rotateY(0);}
+}
+pre {
+  background-color: transparent;
+  font-size: inherit;
+  font-family: inherit;
+  border: inherit;
+}
 .fade-enter-active, .fade-leave-active {
   transition: opacity .5s;
 }
@@ -36,7 +48,7 @@
   transition: all .3s ease;
 }
 .fadeInBottom-enter, .fadeInBottom-leave-to /* .fade-leave-active below version 2.1.8 */ {
-  transform: translateY(1rem);
+  transform: translateY(1.5rem);
   opacity: 0;
 }
 
@@ -58,12 +70,6 @@
   transition: all .3s ease;
 }
 
-@keyframes square-spin {
-        25%{-webkit-transform: perspective(100px) rotateX(180deg) rotateY(0);transform: perspective(100px) rotateX(180deg) rotateY(0);}
-        50%{-webkit-transform: perspective(100px) rotateX(180deg) rotateY(180deg);transform: perspective(100px) rotateX(180deg) rotateY(180deg);}
-        75%{-webkit-transform: perspective(100px) rotateX(0) rotateY(180deg);transform: perspective(100px) rotateX(0) rotateY(180deg);}
-        100%{-webkit-transform: perspective(100px) rotateX(0) rotateY(0);transform: perspective(100px) rotateX(0) rotateY(0);}
-}
 .animation-square-spin {
   -webkit-animation: square-spin 3s 0s cubic-bezier(.09,.57,.49,.9) infinite;
   animation: square-spin 3s 0s cubic-bezier(.09,.57,.49,.9) infinite;
@@ -81,14 +87,18 @@
   color: #2c3e50;
   width: 100%;
 }
-.not-select{
-    -moz-user-select:none; /*火狐*/
-    -webkit-user-select:none; /*webkit浏览器*/
-    -ms-user-select:none; /*IE10*/
-    -khtml-user-select:none; /*早期浏览器*/
-    user-select:none;
+
+.blog-content {
+  &>div {
+    padding: 1.1rem;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(100% - 2.2rem)
+  }
 }
-.color-gray {
-  color: #b2bac2;
+
+.uk-table th {
+  text-align: left;
 }
 </style>

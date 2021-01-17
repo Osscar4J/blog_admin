@@ -11,28 +11,28 @@ export default {
 				tempFun(res)
 			}
 		}
-		this.request({url: this.baseUrl, method: 'GET', params: params.data}, params)
+		return this.request({url: this.baseUrl, method: 'GET', params: params.data}, params)
 	},
 
 	add(params) {
-		this.request({url: this.baseUrl, method: 'POST', data: params.data}, params)
+		return this.request({url: this.baseUrl, method: 'POST', data: params.data}, params)
 	},
 
 	update(params) {
-		this.request({url: this.baseUrl, method: 'PUT', data: params.data}, params)
+		return this.request({url: this.baseUrl, method: 'PUT', data: params.data}, params)
 	},
 
 	addOrUpdate(params) {
-		this.request({url: this.baseUrl, method: 'POST', data: params.data}, params)
+		return this.request({url: this.baseUrl, method: 'POST', data: params.data}, params)
 	},
 
 	delete(params) {
-		this.request({url: this.baseUrl + '/' + params.data.id, method: 'DELETE'}, params)
+		return this.request({url: this.baseUrl + '/' + params.data.id, method: 'DELETE'}, params)
 	},
 
 	// 通过id获取详情
 	getDetail(params) {
-		this.request({url: this.baseUrl + '/' + params.data.id}, params)
+		return this.request({url: this.baseUrl + '/' + params.data.id}, params)
 	},
 
 
@@ -50,10 +50,10 @@ export default {
 	 * @return {[type]}        [description]
 	 */
 	request(config, params) {
-		Request.request(config, params)
+		return Request.request(config, params)
 	},
 
 	postFile(config) {
-		Request.postFile(config)
+		return Request.postFile(config)
 	}
 }

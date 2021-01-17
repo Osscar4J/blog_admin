@@ -55,6 +55,7 @@
 			submit() {
 				this.loading = true
 				CommonAPi.login({
+					toast: false,
 					data: this.entity,
 					success: ({data}) => {
 						this.setUserToken(data.content.token)

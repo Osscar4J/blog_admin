@@ -17,5 +17,15 @@ export default {
                 Vue.prototype.$toast(msg, {status: 'success'})
             }
         }
+        if (!Vue.prototype.$confirm){
+            Vue.prototype.$confirm = config => {
+                config.labels = config.labels || {ok: '确定', cancel: '取消'}
+                UIkit.modal.confirm(config.msg, config).then(res => {
+                    config.confirm && config.confirm()
+                }, err => {
+                    config.cancel && config.cancel()
+                })
+            }
+        }
 	}
 }

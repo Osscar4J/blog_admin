@@ -5,7 +5,7 @@
 		</div>
 		<div class="uk-padding-small uk-text-left" style="border-bottom: 1px dashed #edeeef;">
 			<div class="uk-text-center">
-				<div v-show.sync="loading" uk-spinner></div>
+				<div v-show="loading" uk-spinner></div>
 			</div>
 			<div v-if="!!entity">
 				<div v-html="entity.content"></div>

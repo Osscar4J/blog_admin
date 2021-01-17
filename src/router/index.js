@@ -29,6 +29,36 @@ const router = new Router({
           path: 'dashboard',
           meta: {auth: true},
           component: () => import('@/pages/admin/dashboard')
+        },
+        {
+          path: 'articles',
+          meta: {auth: true},
+          component: () => import('@/pages/admin/articles')
+        },
+        {
+          path: 'articleEditor',
+          meta: {auth: true},
+          component: () => import('@/pages/admin/articleEditor')
+        },
+        {
+          path: 'guestBook',
+          meta: {auth: true},
+          component: () => import('@/pages/admin/guestBook')
+        },
+        {
+          path: 'banners',
+          meta: {auth: true},
+          component: () => import('@/pages/admin/banners')
+        },
+        {
+          path: 'portScanner',
+          meta: {auth: true},
+          component: () => import('@/pages/admin/tools/portScanner')
+        },
+        {
+          path: 'userInfo',
+          meta: {auth: true},
+          component: () => import('@/pages/admin/userInfo')
         }
       ]
     },
