@@ -4,16 +4,16 @@
 			<ul class="nav" :style="'width:' + sideBarMaxWidth">
 				<li class="nav-title">导航</li>
 				<li class="nav-item" 
-					v-for="item in menus" :key="item.name" :class="item.subMenus ? 'nav-dropdown': ''" 
+					v-for="item in menus" :key="item.id" :class="item.subMenus ? 'nav-dropdown': ''" 
 					@click="handleNav($event, item)">
-					<span class="nav-link" :class="$route.path == item.path ? 'active':''">
+					<span class="nav-link" :class="$route.path == item.url ? 'active':''">
 						<span class="icon uk-icon-link" :uk-icon="'icon: '+item.icon+'; ratio: .8'"></span>
 						{{item.name}}
 						<span v-if="item.subMenus" class="icon uk-icon-link" uk-icon="icon: chevron-left; ratio: .8"></span>
 					</span>
-					<ul v-if="item.subMenus" class="nav-dropdown-items">
-						<li class="nav-item" v-for="subItem in item.subMenus" :key="subItem.name">
-							<a @click="$router.push(subItem.path)" class="nav-link" :class="$route.path == subItem.path ? 'active':''">
+					<ul v-if="item.subMenus" class="nav-dropdown-items" style="padding-left: 2em; list-style: none;">
+						<li class="nav-item" v-for="subItem in item.subMenus" :key="subItem.id">
+							<a @click="$router.push(subItem.url)" class="nav-link" :class="$route.path == subItem.url ? 'active':''">
 								<span class="icon uk-icon-link" :uk-icon="'icon: '+subItem.icon+'; ratio: .8'"></span>
 								{{subItem.name}}
 							</a>
@@ -30,37 +30,22 @@
 		data() {
 			return {
 				sideBarMaxWidth: 0,
-				menus: [
-					{name: '控制台', path: '/admin/dashboard', icon: 'home'},
-					{name: '文章管理', path: '/admin/articles', icon: 'file-text'},
-					{name: 'Banners', path: '/admin/banners', icon: 'world'},
-					{name: '留言', path: '/admin/guestBook', icon: 'comments'},
-					{
-						name: '工具',
-						icon: 'laptop',
-						subMenus: [
-							{
-								name: '端口扫描',
-								icon: 'nut',
-								path: '/admin/portScanner'
-							}
-						]
-					}
-				]
+				menus: []
 			}
 		},
 		computed: {
-			...mapGetters(['sideBarWidth'])
+			...mapGetters(['sideBarWidth', 'userInfo'])
 		},
 		mounted() {
 			this.sideBarMaxWidth = this.sideBarWidth
+			this.menus = this.userInfo.menus.filter(m => m.type == 1)
 		},
 		methods: {
 			handleNav(e, menu) {
 				if (menu.subMenus){
 					this.navToggle(e)
 				} else {
-					this.$router.push(menu.path)
+					this.$router.push(menu.url)
 				}
 			},
 			navToggle(e) {
@@ -171,6 +156,9 @@
 					max-height: 0!important;
 					-webkit-transition: max-height .3s ease-in-out;
 					transition: max-height .3s ease-in-out;
+					&>li>a.active {
+						background-color: inherit;
+					}
 				}
 				&.open {
 					.nav-dropdown-items {

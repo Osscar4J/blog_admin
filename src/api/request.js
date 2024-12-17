@@ -45,6 +45,7 @@ const failureCall = (res, params) => {
 
 let Request = (config, params) =>{
 	config = Object.assign({}, requestConfig, config)
+	params = params || {}
 	if (params.toast == null || params.toast == undefined)
 		params.toast = config.toast
 

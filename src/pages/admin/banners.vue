@@ -7,16 +7,22 @@
                     <li v-for="item in data.records" :key="item.id">
                         <div class="uk-inline">
                             <img :src="item.fileUrl">
-                            <div class="uk-overlay uk-light uk-position-bottom">
-                                <p>
-                                    <a class="uk-link-heading color-blue">排序</a>
-                                    |
-                                    <a class="uk-link-heading color-red" @click="deleteEntity(item)">删除</a>
-                                    |
-                                    <a class="uk-link-heading color-orange" v-if="item.status == 1" @click="updateEntity({id: item.id, status: 2})">下架</a>
-                                    <a class="uk-link-heading color-green" v-else-if="item.status == 0 || item.status == 2" @click="updateEntity({id: item.id, status: 1})">上架</a>
-                                </p>
-                                <p>{{new Date(item.createTime).toSimple()}}</p>
+                            <div class="uk-light uk-position-bottom" style="background:rgba(0, 0, 0, .4)">
+                                <div class="uk-padding-small">
+                                    <p class="uk-margin-remove-bottom">
+                                        <a class="uk-link-heading color-blue" @click="updateSortNo(item)">排序</a>
+                                        |
+                                        <a class="uk-link-heading color-red" @click="deleteEntity(item)" v-auth="auth.banner.delete">删除</a>
+                                        |
+                                        <a class="uk-link-heading color-orange" v-if="item.status == 1" 
+                                            @click="updateEntity({id: item.id, status: 2})"
+                                            v-auth="auth.banner.update">下架</a>
+                                        <a class="uk-link-heading color-green" v-else-if="item.status == 0 || item.status == 2" 
+                                            @click="updateEntity({id: item.id, status: 1})"
+                                            v-auth="auth.banner.update">上架</a>
+                                    </p>
+                                    <p class="uk-margin-small-top uk-margin-remove-bottom">{{new Date(item.createTime).toSimple()}}</p>
+                                </div>
                             </div>
                         </div>
                     </li>
@@ -31,6 +37,7 @@
 <script>
 import Pagination from '@/components/pagination'
 import BannerApi from '@/api/bannerApi'
+import { mapGetters } from 'vuex'
 export default {
     components: {Pagination},
     data() {
@@ -44,10 +51,23 @@ export default {
             }
         }
     },
+    computed: {
+        ...mapGetters(['auth'])
+    },
     mounted() {
         this.getData(1)
     },
     methods: {
+        updateSortNo(entity) {
+            let sortNo = prompt('请输入排序值（升序）：')
+            if (sortNo){
+                this.updateEntity({
+                    id: entity.id,
+                    sortNo: sortNo
+                })
+            }
+        },
+
         getData(p) {
             this.reqvo.current = p || this.reqvo.current
             BannerApi.list({

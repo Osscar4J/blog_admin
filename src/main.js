@@ -8,6 +8,8 @@ import store from './store'
 import Init from './constant/init'
 import Global from './utils/global'
 
+import AuthDir from './directives/auth'
+
 // 导入富文本编辑器
 import VueQuillEditor from 'vue-quill-editor'
 // 导入富文本编辑器样式
@@ -22,6 +24,9 @@ Init()
 
 Vue.use(Global)
 Vue.config.productionTip = false
+
+// 权限指令
+Vue.directive('auth', AuthDir)
 
 /* eslint-disable no-new */
 new Vue({

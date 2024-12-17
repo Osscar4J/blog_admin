@@ -96,13 +96,13 @@ export default {
         async beforeUpload(e) {
             let file = e.target.files[0]
             if (file){
-                let image = await FileApi.multiUpload({
+                let res = await FileApi.ossUpload({
                     data: {
                         file: file,
                         filename: 'article/' + Date.now() + file.name.substr(file.name.lastIndexOf('.'))
                     }
                 })
-                this.uploadSuccess(image.content)
+                this.uploadSuccess(res)
             }
             e.target.value = ''
         },
@@ -111,7 +111,7 @@ export default {
             // 获取光标所在位置
             let length = quill.getSelection().index;
             // 插入图片，res为服务器返回的图片链接地址
-            quill.insertEmbed(length, 'image', res)
+            quill.insertEmbed(length, 'image', res.fullUrl)
             // 调整光标到最后
             quill.setSelection(length + 1)
         }

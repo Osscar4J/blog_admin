@@ -10,7 +10,7 @@
                             <th>状态</th>
                             <th>IP</th>
                             <th>内容</th>
-                            <th>操作</th>
+                            <th v-auth="auth.message.code">操作</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -35,9 +35,13 @@
                             <td>
                                 <pre>{{item.content}}</pre>
                             </td>
-                            <td>
-                                <button class="uk-button uk-button-danger uk-border-rounded uk-button-small" @click="deleteEntity(item)">删除</button>
-                                <button v-if="item.status==0" class="uk-button uk-button-default uk-border-rounded uk-button-small" @click="updateEntity({id: item.id, status: 1})">通过</button>
+                            <td v-auth="auth.message.code">
+                                <button class="uk-button uk-button-danger uk-border-rounded uk-button-small" 
+                                    @click="deleteEntity(item)"
+                                    v-auth="auth.message.delete">删除</button>
+                                <button v-if="item.status==0" class="uk-button uk-button-default uk-border-rounded uk-button-small" 
+                                    @click="updateEntity({id: item.id, status: 1})"
+                                    v-auth="auth.message.update">通过</button>
                             </td>
                         </tr>
                     </tbody>
@@ -52,6 +56,7 @@
 <script>
 import MessageApi from '@/api/messageApi'
 import Pagination from '@/components/pagination'
+import { mapGetters } from 'vuex'
 export default {
     components: {Pagination},
     data() {
@@ -64,6 +69,9 @@ export default {
                 records: []
             }
         }
+    },
+    computed: {
+        ...mapGetters(['auth'])
     },
     mounted() {
         this.getData(1)

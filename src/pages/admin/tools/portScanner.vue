@@ -10,7 +10,7 @@
                             <th>域名</th>
                             <th>状态</th>
                             <th>扫描结果</th>
-                            <th>操作</th>
+                            <th v-auth="auth.article.delete">操作</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -33,7 +33,9 @@
                                 </pre>
                             </td>
                             <td>
-                                <button class="uk-button uk-button-danger uk-button-small uk-border-rounded" @click="remove(item)">删除</button>
+                                <button class="uk-button uk-button-danger uk-button-small uk-border-rounded" 
+                                    @click="remove(item)"
+                                    v-auth="auth.nmap.delete">删除</button>
                             </td>
                         </tr>
                     </tbody>
@@ -48,6 +50,7 @@
 <script>
 import NmapApi from '@/api/nmapApi'
 import Pagination from '@/components/pagination'
+import { mapGetters } from 'vuex'
 export default {
     components: {Pagination},
     data() {
@@ -60,6 +63,9 @@ export default {
                 records: []
             }
         }
+    },
+    computed: {
+        ...mapGetters(['auth'])
     },
     mounted() {
         this.getData(1)
