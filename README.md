@@ -1,6 +1,6 @@
-# blog_front
+# blog_admin
 
-> A simple blog
+> A simple admin
 
 ## Build Setup
 

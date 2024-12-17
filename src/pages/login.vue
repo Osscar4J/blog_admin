@@ -32,6 +32,7 @@
 </template>
 <script>
 	import CommonAPi from '@/api/commonApi'
+	import UserApi from '@/api/userApi'
 	import { mapMutations, mapGetters } from 'vuex'
 
 	export default {
@@ -51,21 +52,48 @@
 			this.userToken && this.$router.push('/admin/dashboard')
 		},
 		methods: {
-			...mapMutations(['setUserToken']),
+			...mapMutations(['setUserToken', 'setUserInfo', 'removeToken']),
 			submit() {
 				this.loading = true
 				CommonAPi.login({
+					toast: false,
 					data: this.entity,
-					success: ({data}) => {
+					success: async ({data}) => {
 						this.setUserToken(data.content.token)
-						this.$router.push('/admin/dashboard')
+						let res = await UserApi.getUserInfo({ toast: false })
+						let userInfo = res.data.content
+						let firstMenu = this.getFirstMenu(userInfo.menus)
+						if (firstMenu){
+							this.setUserInfo(userInfo)
+							this.$router.push(firstMenu)
+						} else {
+							this.removeToken()
+							this.$error('该账号没有登录权限')
+						}
 					},
 					always: res => this.loading = false
 				})
+			},
+
+			getFirstMenu(menus) {
+				if (!menus || !menus.length){
+					return null
+				}
+				for (let i = 0; i < menus.length; i++) {
+					const m = menus[i];
+					if (m.type == 1){
+						if (m.url){
+							return m.url
+						}
+						if (m.subMenus){
+							let fm = this.getFirstMenu(m.subMenus)
+							if (fm){
+								return fm
+							}
+						}
+					}
+				}
 			}
 		}
 	}
 </script>
-<style lang="scss">
-	
-</style>

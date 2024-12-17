@@ -10,7 +10,10 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "ali-oss": "^6.17.1",
     "axios": "^0.21.1",
+    "nprogress": "^0.2.0",
+    "spark-md5": "^3.0.1",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.6.0"
@@ -48,6 +51,7 @@
     "uglifyjs-webpack-plugin": "^1.1.1",
     "url-loader": "^0.5.8",
     "vue-loader": "^13.3.0",
+    "vue-quill-editor": "^3.0.6",
     "vue-style-loader": "^3.0.1",
     "vue-template-compiler": "^2.5.2",
     "webpack": "^3.6.0",

@@ -1,41 +1,21 @@
 <template>
-	<div class="side-bar">
+	<div class="side-bar" :style="'width:' + sideBarWidth">
 		<nav class="side-bar-nav open">
-			<ul class="nav">
+			<ul class="nav" :style="'width:' + sideBarMaxWidth">
 				<li class="nav-title">导航</li>
-				<li class="nav-item">
-					<span class="nav-link">
-						<span class="icon uk-icon-link" uk-icon="icon: home; ratio: .8"></span>
-						控制台
+				<li class="nav-item" 
+					v-for="item in menus" :key="item.id" :class="item.subMenus ? 'nav-dropdown': ''" 
+					@click="handleNav($event, item)">
+					<span class="nav-link" :class="$route.path == item.url ? 'active':''">
+						<span class="icon uk-icon-link" :uk-icon="'icon: '+item.icon+'; ratio: .8'"></span>
+						{{item.name}}
+						<span v-if="item.subMenus" class="icon uk-icon-link" uk-icon="icon: chevron-left; ratio: .8"></span>
 					</span>
-				</li>
-				<li class="nav-item">
-					<span class="nav-link active">
-						<span class="icon uk-icon-link" uk-icon="icon: file-text; ratio: .8"></span>
-						文章管理
-					</span>
-				</li>
-				<li class="nav-item">
-					<span class="nav-link">
-						<span class="icon uk-icon-link" uk-icon="icon: comments; ratio: .8"></span>
-						留言
-					</span>
-				</li>
-				<li class="nav-item nav-dropdown" @click="navToggle">
-					<span class="nav-link">
-						<span class="icon uk-icon-link" uk-icon="icon: laptop; ratio: .8"></span>
-						工具
-						<span class="icon uk-icon-link" uk-icon="icon: chevron-left; ratio: .8"></span>
-					</span>
-					<ul class="nav-dropdown-items">
-						<li class="nav-item">
-							<a href="/user/wechat" class="nav-link ">
-								<i class="icon-bubbles"></i> 菜单列表
-							</a>
-						</li>
-						<li class="nav-item">
-							<a href="/user/reply" class="nav-link ">
-								<i class="icon-earphones-alt"></i> 自动回复
+					<ul v-if="item.subMenus" class="nav-dropdown-items" style="padding-left: 2em; list-style: none;">
+						<li class="nav-item" v-for="subItem in item.subMenus" :key="subItem.id">
+							<a @click="$router.push(subItem.url)" class="nav-link" :class="$route.path == subItem.url ? 'active':''">
+								<span class="icon uk-icon-link" :uk-icon="'icon: '+subItem.icon+'; ratio: .8'"></span>
+								{{subItem.name}}
 							</a>
 						</li>
 					</ul>
@@ -45,41 +25,35 @@
 	</div>
 </template>
 <script type="text/javascript">
+	import { mapGetters } from 'vuex'
 	export default {
 		data() {
 			return {
-				menus: [
-					{
-						name: '首页',
-						path: '/'
-					},
-					{
-						name: '留言',
-						path: '/guestBook'
-					},
-					{
-						name: '工具',
-						subMenus: [
-							{
-								name: '端口扫描',
-								path: '/port-scanner'
-							}
-						]
-					}
-				]
+				sideBarMaxWidth: 0,
+				menus: []
 			}
 		},
+		computed: {
+			...mapGetters(['sideBarWidth', 'userInfo'])
+		},
 		mounted() {
-			// console.log(this.$route.path)
+			this.sideBarMaxWidth = this.sideBarWidth
+			this.menus = this.userInfo.menus.filter(m => m.type == 1)
 		},
 		methods: {
+			handleNav(e, menu) {
+				if (menu.subMenus){
+					this.navToggle(e)
+				} else {
+					this.$router.push(menu.url)
+				}
+			},
 			navToggle(e) {
 				if (/open/.test(e.target.parentNode.className)){
 					e.target.parentNode.className = e.target.parentNode.className.replace(' open', '')
 				} else {
 					e.target.parentNode.className += ' open'
 				}
-				console.log(e.target.parentNode)
 			}
 		}
 	}
@@ -93,9 +67,9 @@
     -webkit-box-direction: normal;
     -ms-flex-direction: column;
     flex-direction: column;
-    width: 240px;
+    width: 17rem;
     background-color: #272727;
-    min-height: calc(100vh - 60px);
+    min-height: 100vh;
     -ms-flex-negative: 0;
     flex-shrink: 0;
     top: 0;
@@ -103,9 +77,8 @@
     left: 0;
     -webkit-transition: all .3s;
     transition: all .3s;
-    z-index: 99;
+    z-index: 999;
 	position: fixed;
-	margin-top: 5rem;
 	nav {
 		display: block;
 		-webkit-box-flex: 1;
@@ -170,10 +143,11 @@
 				&>.nav-link>.icon:last-of-type {
 					float: right;
 					margin-top: 4px;
+					transition: transform .2s ease-in;
 				}
 				&.open>.nav-link>.icon:last-of-type {
-					-webkit-transform: rotate(270deg);
-    				transform: rotate(270deg);
+					-webkit-transform: rotate(-90deg);
+    				transform: rotate(-90deg);
 				}
 				.nav-dropdown-items {
 					padding: 0;
@@ -182,6 +156,9 @@
 					max-height: 0!important;
 					-webkit-transition: max-height .3s ease-in-out;
 					transition: max-height .3s ease-in-out;
+					&>li>a.active {
+						background-color: inherit;
+					}
 				}
 				&.open {
 					.nav-dropdown-items {

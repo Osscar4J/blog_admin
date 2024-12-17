@@ -6,26 +6,28 @@ let requestConfig = {
 	method: 'GET',
 	baseURL: '/api/',
 	timeout: 8000,
+	toast: true,
 	headers: {token: null}
 }
 
 const successCall = (res, params) => {
 	if (parseInt(res.data.code) != 0) {
 		if (typeof params.failure === 'function') {
+			params.toast && UIkit.notification(res.data.msg, {pos: 'top-center', status: "danger"})
 			params.failure(res)
 		} else {
 			UIkit.notification(res.data.msg, {pos: 'top-center', status: "danger"})
 		}
 		// typeof params.failure === 'function' && params.failure(res)
 		if (parseInt(res.data.code) == 401) {
+			Store.commit('removeToken')
 			Router.push('/')
 		}
 	} else {
+		params.toast && UIkit.notification(res.data.msg, {pos: 'top-center', status: "success"})
 		typeof params.success === 'function' && params.success(res)
 	}
-	if (typeof params.finally === 'function') {
-		params.finally(res)
-	} else if (typeof params.always === 'function') {
+	if (typeof params.always === 'function') {
 		params.always(res)
 	}
 }
@@ -43,28 +45,33 @@ const failureCall = (res, params) => {
 
 let Request = (config, params) =>{
 	config = Object.assign({}, requestConfig, config)
+	params = params || {}
+	if (params.toast == null || params.toast == undefined)
+		params.toast = config.toast
 
 	if (Store.getters.userToken)
 		config.headers['X-Token'] = Store.getters.userToken
 
 	if (config.method.toLowerCase() == 'delete') {
-		Axios.delete(config.url, config).then(res => {
+		return Axios.delete(config.url, config).then(res => {
 			successCall(res, params)
 		}).catch(res => {
 			failureCall(res, params)
 		})
 	} else {
-		Axios(config).then(function(res){
+		return Axios(config).then(function(res){
 			successCall(res, params)
+			return res
 		}).catch(function(res){
 			failureCall(res, params)
+			return res
 		})
 	}
 }
 
 export default {
 	request(config, params) {
-		Request(config, params)
+		return Request(config, params)
 	},
 
 	postFile(config) {
@@ -78,13 +85,21 @@ export default {
 				}
 			}
 		}
-		Axios.post(requestConfig.baseURL + config.url, data, 
-			{headers: {"Content-Type": "multipart/form-data", 'token': Store.getters.userToken.token}}).then(data => {
+
+		return Axios.post(requestConfig.baseURL + config.url, data, 
+			{
+				headers: {
+					"Content-Type": "multipart/form-data", 
+					'X-Token': Store.getters.userToken
+				}
+			}).then(data => {
 			if (typeof config.success === 'function')
 				config.success(data)
+			return data
 		}, err => {
 			if (typeof config.error === 'function')
 				config.error(err)
+			return err
 		})
 	}
 }
