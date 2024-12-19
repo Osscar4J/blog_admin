@@ -3,7 +3,7 @@
         <div class="uk-card uk-card-default uk-card-body">
             <h3 class="uk-card-title">Dashboard</h3>
             <div>
-                <p>Lorem ipsum <a href="#">dolor</a> sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <p>欢迎使用博客管理系统</p>
             </div>
         </div>
     </div>

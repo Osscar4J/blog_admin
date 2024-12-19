@@ -1,90 +1,120 @@
 <template>
-    <div class="header" uk-sticky>
-        <div :style="'margin-left: ' + sideBarWidth + ';'" class="toggle-bar">
-            <i uk-icon="table" title="收起侧边栏" @click="widthToggle"></i>
-        </div>
-        <div class="right-bar">
-            <nav class="uk-navbar-container uk-margin" uk-navbar="mode: click">
-                <div class="uk-navbar-left">
-                    <ul class="uk-navbar-nav">
-                        <li>
-                            <a class="user">admin</a>
-                            <div class="uk-navbar-dropdown">
-                                <ul class="uk-nav uk-navbar-dropdown-nav">
-                                    <li><a @click="$router.push('/admin/userInfo')">个人资料</a></li>
-                                    <li><a @click="logout">退出</a></li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
+  <div class="header-bar" :style="{ left: sideBarWidth }">
+    <div class="left">
+      <el-button type="text" @click="handleCollapse">
+        <el-icon :size="20">
+          <Fold v-if="!isCollapsed" />
+          <Expand v-else />
+        </el-icon>
+      </el-button>
+      <breadcrumb />
     </div>
+    
+    <div class="right">
+      <el-dropdown trigger="click" @command="handleCommand">
+        <div class="avatar-wrapper">
+          <el-avatar :size="30" :src="userInfo.avatar">
+            {{ userInfo.username?.charAt(0)?.toUpperCase() }}
+          </el-avatar>
+          <span class="username">{{ userInfo.username }}</span>
+          <el-icon><CaretBottom /></el-icon>
+        </div>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item command="profile">个人信息</el-dropdown-item>
+            <el-dropdown-item command="logout">退出登录</el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
+      </el-dropdown>
+    </div>
+  </div>
 </template>
-<script>
-import { mapGetters, mapMutations } from 'vuex'
-export default {
-    props: {
-        widthToggle: {
-            type: Function,
-            default: () => {}
-        }
-    },
-    computed: {
-        ...mapGetters(['sideBarWidth'])
-    },
-    methods: {
-        ...mapMutations(['removeToken']),
-        logout() {
-            this.removeToken()
-            this.$router.push('/')
-        }
+
+<script setup>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import { ElMessageBox } from 'element-plus'
+import { Fold, Expand, CaretBottom } from '@element-plus/icons-vue'
+import Breadcrumb from './breadcrumb.vue'
+import commonApi from '@/api/commonApi'
+import { ElMessage } from 'element-plus'
+const props = defineProps({
+  widthToggle: {
+    type: Function,
+    required: true
+  }
+})
+
+const store = useStore()
+const router = useRouter()
+
+const sideBarWidth = computed(() => store.state.sideBarWidth)
+const isCollapsed = computed(() => sideBarWidth.value === '0rem')
+const userInfo = computed(() => store.state.userInfo)
+
+const handleCollapse = () => {
+  props.widthToggle()
+}
+
+const handleCommand = async (command) => {
+  if (command === 'profile') {
+    router.push('/admin/profile')
+  } else if (command === 'logout') {
+    try {
+      await ElMessageBox.confirm('确认退出登录吗？', '提示', {
+        type: 'warning'
+      })
+      let res = await commonApi.logout()
+      if (res.code === 0) {
+        store.commit('clearUserInfo')
+        router.push('/login')
+      }
+    } catch (error) {
+      console.error(error)
     }
+  }
 }
 </script>
+
 <style lang="scss" scoped>
-.header {
-    width: 100%;
-    height: 4rem;
-    line-height: 4rem;
-    padding: 0 1rem;
-    background-color: #ffffff;
-    -webkit-box-shadow: 0 1px 3px rgba(18,18,18,.1);
-    box-shadow: 0 1px 3px rgba(18,18,18,.1);
-    .uk-icon {
-        cursor: pointer;
-        &:hover {
-            color: #42a5f5;
-        }
+.header-bar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 50px;
+  padding: 0 15px;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: left .2s ease-in;
+  z-index: 1000;
+
+  .left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+
+  .right {
+    .avatar-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 5px;
+      
+      &:hover {
+        background: rgba(0,0,0,.025);
+      }
+
+      .username {
+        font-size: 14px;
+        color: #333;
+      }
     }
-    .toggle-bar {
-        transition: margin-left .2s ease-in;
-        display: inline-block;
-    }
-    .right-bar {
-        margin-right: 1rem;
-        float: right;
-        .uk-navbar-container {
-            background-color: transparent;
-            height: 100%;
-            height: 4rem;
-            line-height: 4rem !important;
-            .uk-navbar-nav {
-                height: 100%;
-                a.user {
-                    min-height: 4rem;
-                    line-height: 4rem;
-                }
-                .uk-navbar-dropdown {
-                    padding: 15px;
-                    li {
-                        height: 3rem;
-                        line-height: 3rem;
-                    }
-                }
-            }
-        }
-    }
+  }
 }
 </style>
