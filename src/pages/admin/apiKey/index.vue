@@ -61,6 +61,18 @@
         </template>
       </el-table-column>
       <el-table-column prop="remark" label="备注" show-overflow-tooltip />
+      <el-table-column prop="permissions" label="权限" show-overflow-tooltip>
+        <template #default="{ row }">
+          <el-tag 
+            v-for="permission in row.permissions?.split('#')" 
+            :key="permission"
+            class="permission-tag"
+            size="small"
+          >
+            {{ permission }}
+          </el-tag>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="150" fixed="right">
         <template #default="{ row }">
           <el-button link type="primary" @click="handleEdit(row)">编辑</el-button>
@@ -120,6 +132,24 @@
           <el-input-number v-model="form.expireTime" :min="0" />
           <span class="unit">分钟</span>
         </el-form-item>
+        <el-form-item label="权限" prop="permissions">
+          <el-select
+            v-model="permissionsList"
+            multiple
+            filterable
+            allow-create
+            default-first-option
+            placeholder="请输入权限，回车确认"
+            @change="handlePermissionsChange"
+          >
+            <el-option
+              v-for="item in permissionOptions"
+              :key="item"
+              :label="item"
+              :value="item"
+            />
+          </el-select>
+        </el-form-item>
         <el-form-item label="备注" prop="remark">
           <el-input
             v-model="form.remark"
@@ -147,6 +177,14 @@ import apiKeyApi from '@/api/apiKeyApi'
 import Clipboard from 'clipboard'
 import { v4 as uuidv4 } from 'uuid'
 
+const permissionsList = ref([])
+const permissionOptions = ref(['ai_bought', 'ai_signals', 'ai_trade']) // 示例权限选项
+
+// 处理权限变化
+const handlePermissionsChange = (values) => {
+  form.value.permissions = values.join('#')
+}
+
 // 搜索表单
 const searchForm = ref({
   apiKey: ''
@@ -171,7 +209,8 @@ const form = ref({
   maxUser: 1,
   expireTime: 0,
   expireDate: '',
-  remark: ''
+  remark: '',
+  permissions: ''
 })
 
 const rules = {
@@ -226,8 +265,10 @@ const handleAdd = () => {
     maxUser: 1,
     expireTime: 0,
     expireDate: '',
-    remark: ''
+    remark: '',
+    permissions: ''
   }
+  permissionsList.value = []
   dialogVisible.value = true
 }
 
@@ -237,6 +278,7 @@ const handleEdit = (row) => {
     ...row,
     expireDate: row.expireDate ? new Date(row.expireDate).toISOString().slice(0, 19).replace('T', ' ') : ''
   }
+  permissionsList.value = row.permissions ? row.permissions.split('#') : []
   dialogVisible.value = true
 }
 
@@ -404,6 +446,11 @@ onMounted(() => {
   
   .text-warning {
     color: #e6a23c;
+  }
+
+  .permission-tag {
+    margin-right: 4px;
+    margin-bottom: 4px;
   }
 }
 </style> 
