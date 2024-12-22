@@ -22,6 +22,11 @@
 				<el-icon><Key /></el-icon>
 				<template #title>API Key管理</template>
 			</el-menu-item>
+
+			<el-menu-item index="/admin/notice">
+				<el-icon><Bell /></el-icon>
+				<template #title>公告管理</template>
+			</el-menu-item>
 		</el-menu>
 	</div>
 </template>
@@ -30,7 +35,7 @@
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 import { useRoute } from 'vue-router'
-import { Odometer, Document, Picture, Key } from '@element-plus/icons-vue'
+import { Odometer, Document, Picture, Key, Bell } from '@element-plus/icons-vue'
 
 const store = useStore()
 const route = useRoute()

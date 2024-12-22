@@ -25,6 +25,12 @@ const router = createRouter({
           meta: { auth: true, title: '仪表盘' }
         },
         {
+          path: 'notice',
+          name: 'Notice',
+          component: () => import('../pages/admin/notice/index.vue'),
+          meta: { auth: true, title: '公告管理' }
+        },
+        {
           path: 'apiKey',
           name: 'ApiKey',
           component: () => import('../pages/admin/apiKey/index.vue'),
