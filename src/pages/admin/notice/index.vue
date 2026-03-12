@@ -41,7 +41,7 @@
       </el-table-column>
       <el-table-column prop="type" label="类型" width="100">
         <template #default="{ row }">
-          <el-tag>{{ row.type === 1 ? '普通' : '其他' }}</el-tag>
+          <el-tag>{{ row.type === 1 ? '普通' : row.type === 2 ? '其他' : 'VIP' }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="readCount" label="阅读数" width="100" />
@@ -101,6 +101,7 @@
           <el-select v-model="form.type">
             <el-option label="普通" :value="1" />
             <el-option label="其他" :value="2" />
+            <el-option label="VIP" :value="3" />
           </el-select>
         </el-form-item>
         <el-form-item label="内容" prop="content">
